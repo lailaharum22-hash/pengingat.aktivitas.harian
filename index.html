@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pengingat Aktivitas Harian – REMINDER</title>
+  <meta name="description" content="Aplikasi pengingat aktivitas harian terbaik. Atur jadwal dari bangun tidur hingga tidur malam, dapatkan notifikasi tepat waktu." />
+  <meta property="og:title" content="Pengingat Aktivitas Harian – REMINDER" />
+  <meta property="og:description" content="Atur aktivitas harian & dapatkan pengingat otomatis! 🔔" />
+  <meta property="og:image" content="logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ===== LOGIN PAGE ===== -->
+<div id="login-page" class="login-page">
+  <div class="login-bg-circles">
+    <div class="circle c1"></div>
+    <div class="circle c2"></div>
+    <div class="circle c3"></div>
+  </div>
+  <div class="login-card">
+    <div class="login-logo-wrap">
+      <img src="logo.png" alt="Reminder Logo" class="login-logo" />
+    </div>
+    <h1 class="login-title">Pengingat Aktivitas Harian</h1>
+    <p class="login-subtitle">Masuk untuk mulai mengatur jadwal harianmu</p>
+
+    <div class="login-tabs">
+      <button class="login-tab active" id="tab-email" onclick="switchLoginTab('email')">📧 Email</button>
+      <button class="login-tab" id="tab-name" onclick="switchLoginTab('name')">👤 Nama Pengguna</button>
+    </div>
+
+    <div id="login-form-email" class="login-form-section active">
+      <div class="login-form-group">
+        <label class="login-label">Alamat Email</label>
+        <div class="login-input-wrap">
+          <span class="login-input-icon">📧</span>
+          <input type="email" id="login-email" class="login-input" placeholder="nama@email.com" />
+        </div>
+      </div>
+      <div class="login-form-group">
+        <label class="login-label">Kata Sandi</label>
+        <div class="login-input-wrap">
+          <span class="login-input-icon">🔒</span>
+          <input type="password" id="login-password" class="login-input" placeholder="••••••••" />
+          <button class="toggle-pw-btn" onclick="togglePassword('login-password')">👁</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="login-form-name" class="login-form-section">
+      <div class="login-form-group">
+        <label class="login-label">Nama Pengguna</label>
+        <div class="login-input-wrap">
+          <span class="login-input-icon">👤</span>
+          <input type="text" id="login-username" class="login-input" placeholder="Masukkan nama panggilanmu..." />
+        </div>
+      </div>
+      <div class="login-form-group">
+        <label class="login-label">Kode PIN (4 digit)</label>
+        <div class="login-input-wrap">
+          <span class="login-input-icon">🔢</span>
+          <input type="password" id="login-pin" class="login-input" placeholder="••••" maxlength="4" pattern="[0-9]*" inputmode="numeric" />
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-primary btn-large btn-login" id="btn-login" onclick="handleLogin()">
+      Masuk ke Dashboard →
+    </button>
+
+    <p class="login-hint">✨ Data tersimpan di perangkat ini secara lokal & aman</p>
+  </div>
+</div>
+
+<!-- ===== ONBOARDING OVERLAY ===== -->
+<div id="onboarding-overlay" class="onboarding-overlay hidden">
+  <div class="onboarding-card" id="onboarding-card">
+
+    <!-- Step 1: Welcome -->
+    <div class="ob-step active" id="ob-step-1">
+      <div class="ob-logo-wrap">
+        <img src="logo.png" alt="Reminder Logo" class="ob-logo" />
+      </div>
+      <h1 class="ob-title">Halo, <span id="ob-welcome-name">Pengguna</span>! 👋</h1>
+      <p class="ob-desc">Mari sesuaikan pengalaman pengingat untukmu agar lebih personal.</p>
+      <button class="btn-primary btn-large" onclick="goStep(2)">Lanjut Setup →</button>
+    </div>
+
+    <!-- Step 2: User Type -->
+    <div class="ob-step" id="ob-step-2">
+      <div class="ob-back" onclick="goStep(1)">← Kembali</div>
+      <h2 class="ob-title">Kamu siapa? 👤</h2>
+      <p class="ob-desc">Pilih peranmu agar reminder lebih personal</p>
+      <div class="role-grid">
+        <button class="role-card" data-role="umum" onclick="selectRole(this)">
+          <span class="role-icon">🌟</span>
+          <span class="role-label">Umum</span>
+          <span class="role-sub">Untuk semua kalangan</span>
+        </button>
+        <button class="role-card" data-role="pekerja" onclick="selectRole(this)">
+          <span class="role-icon">💼</span>
+          <span class="role-label">Pekerja</span>
+          <span class="role-sub">Profesional & karyawan</span>
+        </button>
+        <button class="role-card" data-role="mahasiswa" onclick="selectRole(this)">
+          <span class="role-icon">🎓</span>
+          <span class="role-label">Mahasiswa</span>
+          <span class="role-sub">Kuliah & tugas akhir</span>
+        </button>
+        <button class="role-card" data-role="pelajar" onclick="selectRole(this)">
+          <span class="role-icon">📚</span>
+          <span class="role-label">Pelajar</span>
+          <span class="role-sub">SD, SMP, SMA</span>
+        </button>
+      </div>
+      <button class="btn-primary btn-large" id="btn-next-role" onclick="goStep(3)" disabled>Lanjut →</button>
+    </div>
+
+    <!-- Step 3: Notification Sound -->
+    <div class="ob-step" id="ob-step-3">
+      <div class="ob-back" onclick="goStep(2)">← Kembali</div>
+      <h2 class="ob-title">Pilih Nada Notifikasi 🔔</h2>
+      <p class="ob-desc">Pilih nada yang akan terdengar saat pengingat aktif</p>
+      <div class="sound-list">
+        <button class="sound-item selected" data-sound="bell" onclick="selectSound(this)">
+          <span class="sound-icon">🔔</span>
+          <span class="sound-info">
+            <span class="sound-name">Bell Classic</span>
+            <span class="sound-desc">Lonceng klasik menenangkan</span>
+          </span>
+          <button class="btn-play" onclick="previewSound('bell', event)">▶</button>
+        </button>
+        <button class="sound-item" data-sound="chime" onclick="selectSound(this)">
+          <span class="sound-icon">🎵</span>
+          <span class="sound-info">
+            <span class="sound-name">Gentle Chime</span>
+            <span class="sound-desc">Nada lembut dan menyenangkan</span>
+          </span>
+          <button class="btn-play" onclick="previewSound('chime', event)">▶</button>
+        </button>
+        <button class="sound-item" data-sound="digital" onclick="selectSound(this)">
+          <span class="sound-icon">📳</span>
+          <span class="sound-info">
+            <span class="sound-name">Digital Ping</span>
+            <span class="sound-desc">Modern & tegas</span>
+          </span>
+          <button class="btn-play" onclick="previewSound('digital', event)">▶</button>
+        </button>
+        <button class="sound-item" data-sound="nature" onclick="selectSound(this)">
+          <span class="sound-icon">🌿</span>
+          <span class="sound-info">
+            <span class="sound-name">Nature Breeze</span>
+            <span class="sound-desc">Alam yang menyegarkan</span>
+          </span>
+          <button class="btn-play" onclick="previewSound('nature', event)">▶</button>
+        </button>
+        <button class="sound-item" data-sound="silent" onclick="selectSound(this)">
+          <span class="sound-icon">🔕</span>
+          <span class="sound-info">
+            <span class="sound-name">Diam (Hanya Visual)</span>
+            <span class="sound-desc">Tanpa suara, hanya pop-up</span>
+          </span>
+          <button class="btn-play" style="opacity:0.3;cursor:not-allowed" disabled>▶</button>
+        </button>
+      </div>
+      <button class="btn-primary btn-large" onclick="finishOnboarding()">Masuk ke Dashboard →</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== MAIN APP ===== -->
+<div id="main-app" class="main-app hidden">
+
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <img src="logo.png" alt="Logo" class="sidebar-logo-img" />
+      <span class="sidebar-logo-text">REMINDER</span>
+    </div>
+
+    <!-- User Profile Mini -->
+    <div class="sidebar-user" id="sidebar-user">
+      <div class="sidebar-avatar" id="sidebar-avatar">U</div>
+      <div class="sidebar-user-info">
+        <div class="sidebar-username" id="sidebar-username">Pengguna</div>
+        <div class="sidebar-role-badge" id="sidebar-role-badge">🌟 Umum</div>
+      </div>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="#" class="nav-link active" data-page="dashboard" onclick="showPage('dashboard',this)"><span class="nav-icon">🏠</span> Dashboard</a></li>
+      <li><a href="#" class="nav-link" data-page="schedule" onclick="showPage('schedule',this)"><span class="nav-icon">📅</span> Jadwal</a></li>
+      <li><a href="#" class="nav-link" data-page="reminder" onclick="showPage('reminder',this)"><span class="nav-icon">🔔</span> Reminder</a></li>
+      <li><a href="#" class="nav-link" data-page="history" onclick="showPage('history',this)"><span class="nav-icon">📜</span> Riwayat</a></li>
+      <li><a href="#" class="nav-link" data-page="settings" onclick="showPage('settings',this)"><span class="nav-icon">⚙️</span> Pengaturan</a></li>
+    </ul>
+
+    <div class="sidebar-bottom">
+      <div class="sidebar-clock" id="sidebar-clock">00:00:00</div>
+      <div class="sidebar-date" id="sidebar-date">Sabtu, 18 Oktober 2026</div>
+      <button class="btn-share-sidebar" onclick="shareApp()">🔗 Bagikan Aplikasi</button>
+      <button class="btn-logout-sidebar" onclick="logoutApp()">🚪 Keluar</button>
+    </div>
+  </nav>
+
+  <!-- Mobile Header -->
+  <header class="mobile-header">
+    <button class="hamburger" id="hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="mobile-logo">
+      <img src="logo.png" alt="Logo" style="height:32px"/>
+      <span>REMINDER</span>
+    </div>
+    <button class="btn-icon-sm" onclick="showPage('reminder', null)">🔔</button>
+  </header>
+
+  <!-- Content Area -->
+  <main class="content-area" id="content-area">
+
+    <!-- ======= PAGE: DASHBOARD ======= -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" id="greeting-title">Selamat Pagi! 👋</h1>
+          <p class="page-sub" id="greeting-sub">Ini ringkasan aktivitasmu hari ini</p>
+        </div>
+        <div style="display:flex;gap:0.6rem;flex-wrap:wrap">
+          <button class="btn-outline" onclick="shareApp()">🔗 Bagikan</button>
+          <button class="btn-primary" onclick="showPage('schedule', document.querySelector('[data-page=schedule]'))">+ Tambah Jadwal</button>
+        </div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:linear-gradient(135deg,#b91c1c,#dc2626)">📋</div>
+          <div class="stat-info">
+            <span class="stat-num" id="stat-total">0</span>
+            <span class="stat-label">Total Jadwal</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:linear-gradient(135deg,#15803d,#16a34a)">✅</div>
+          <div class="stat-info">
+            <span class="stat-num" id="stat-done">0</span>
+            <span class="stat-label">Selesai Hari Ini</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:linear-gradient(135deg,#b45309,#d97706)">⏳</div>
+          <div class="stat-info">
+            <span class="stat-num" id="stat-pending">0</span>
+            <span class="stat-label">Menunggu</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:linear-gradient(135deg,#1d4ed8,#2563eb)">🔥</div>
+          <div class="stat-info">
+            <span class="stat-num" id="stat-streak">0</span>
+            <span class="stat-label">Hari Beruntun</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Today's Schedule -->
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">📅 Jadwal Hari Ini</h2>
+          <button class="btn-outline" onclick="showPage('schedule', document.querySelector('[data-page=schedule]'))">Lihat Semua</button>
+        </div>
+        <div id="today-list" class="today-list"></div>
+      </div>
+
+      <!-- Quick Tips by Role -->
+      <div class="section-card">
+        <h2 class="section-title">💡 Tips untuk <span id="tips-role-label">Kamu</span></h2>
+        <div class="tips-list" id="tips-list"></div>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="section-card">
+        <h2 class="section-title">📊 Progress Hari Ini</h2>
+        <div class="progress-wrap">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+          </div>
+          <span class="progress-pct" id="progress-pct">0%</span>
+        </div>
+        <p class="progress-msg" id="progress-msg">Tambahkan jadwal untuk mulai melacak progresmu!</p>
+      </div>
+    </div>
+
+    <!-- ======= PAGE: SCHEDULE ======= -->
+    <div class="page" id="page-schedule">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">📅 Manajemen Jadwal</h1>
+          <p class="page-sub">Tambah, edit, dan kelola aktivitas harianmu</p>
+        </div>
+        <button class="btn-outline" onclick="importDailyDefault()">⚡ Isi Aktivitas Harian</button>
+      </div>
+
+      <!-- Add Schedule Form -->
+      <div class="section-card form-card" id="schedule-form-card">
+        <h2 class="section-title" id="form-card-title">➕ Tambah Jadwal Baru</h2>
+        <input type="hidden" id="sched-edit-id" value="" />
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">📝 Nama Aktivitas</label>
+            <input type="text" id="sched-title" class="form-input" placeholder="Contoh: Rapat tim, Belajar matematika..." />
+          </div>
+          <div class="form-group">
+            <label class="form-label">🏷️ Kategori</label>
+            <select id="sched-category" class="form-input">
+              <option value="kerja">💼 Kerja/Kuliah/Sekolah</option>
+              <option value="pribadi">🏠 Pribadi</option>
+              <option value="kesehatan">❤️ Kesehatan</option>
+              <option value="olahraga">🏃 Olahraga</option>
+              <option value="ibadah">🕌 Ibadah</option>
+              <option value="makan">🍽️ Makan/Minum</option>
+              <option value="lainnya">📌 Lainnya</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">🕐 Waktu Mulai</label>
+            <input type="time" id="sched-start" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">🕑 Waktu Selesai</label>
+            <input type="time" id="sched-end" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">📆 Hari</label>
+            <div class="day-picker" id="day-picker">
+              <button class="day-btn" data-day="Sen" onclick="toggleDay(this)">Sen</button>
+              <button class="day-btn" data-day="Sel" onclick="toggleDay(this)">Sel</button>
+              <button class="day-btn" data-day="Rab" onclick="toggleDay(this)">Rab</button>
+              <button class="day-btn" data-day="Kam" onclick="toggleDay(this)">Kam</button>
+              <button class="day-btn" data-day="Jum" onclick="toggleDay(this)">Jum</button>
+              <button class="day-btn" data-day="Sab" onclick="toggleDay(this)">Sab</button>
+              <button class="day-btn" data-day="Min" onclick="toggleDay(this)">Min</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">⚡ Prioritas</label>
+            <div class="priority-picker">
+              <button class="priority-btn active" data-priority="rendah" onclick="selectPriority(this)">🟢 Rendah</button>
+              <button class="priority-btn" data-priority="sedang" onclick="selectPriority(this)">🟡 Sedang</button>
+              <button class="priority-btn" data-priority="tinggi" onclick="selectPriority(this)">🔴 Tinggi</button>
+            </div>
+          </div>
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">🔔 Pesan Notifikasi Kustom (opsional)</label>
+            <input type="text" id="sched-notif-msg" class="form-input" placeholder="Contoh: Jangan lupa bawa dokumen penting!" />
+          </div>
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">📝 Catatan (opsional)</label>
+            <textarea id="sched-note" class="form-input form-textarea" placeholder="Tambahkan catatan..."></textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-outline" onclick="clearForm()">Reset</button>
+          <button class="btn-primary" id="btn-save-schedule" onclick="saveSchedule()">💾 Simpan Jadwal</button>
+        </div>
+      </div>
+
+      <!-- Filter & List -->
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">📋 Daftar Jadwal</h2>
+          <div class="filter-wrap">
+            <select class="form-input form-input-sm" id="filter-cat" onchange="renderScheduleList()">
+              <option value="all">Semua Kategori</option>
+              <option value="kerja">💼 Kerja/Kuliah</option>
+              <option value="pribadi">🏠 Pribadi</option>
+              <option value="kesehatan">❤️ Kesehatan</option>
+              <option value="olahraga">🏃 Olahraga</option>
+              <option value="ibadah">🕌 Ibadah</option>
+              <option value="makan">🍽️ Makan</option>
+              <option value="lainnya">📌 Lainnya</option>
+            </select>
+          </div>
+        </div>
+        <div id="schedule-list" class="schedule-list">
+          <div class="empty-state">
+            <div class="empty-icon">📋</div>
+            <p>Belum ada jadwal tersimpan</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======= PAGE: REMINDER ======= -->
+    <div class="page" id="page-reminder">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">🔔 Reminder Aktif</h1>
+          <p class="page-sub">Pengingat otomatis berdasarkan jadwalmu</p>
+        </div>
+        <button class="btn-outline" id="btn-enable-notif" onclick="requestNotifPermission()">🔔 Aktifkan Notifikasi Browser</button>
+      </div>
+
+      <!-- Reminder Status -->
+      <div class="section-card reminder-status-card">
+        <div class="reminder-status-icon" id="reminder-status-icon">🔔</div>
+        <div class="reminder-status-info">
+          <h3 id="reminder-status-title">Reminder Aktif</h3>
+          <p id="reminder-status-sub">Sistem sedang memantau jadwalmu</p>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="reminder-toggle" checked onchange="toggleReminder(this)" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <!-- Custom Notification Request -->
+      <div class="section-card">
+        <h2 class="section-title">✏️ Tambah Notifikasi Kustom</h2>
+        <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:1rem">Buat pengingat mandiri dengan waktu dan pesan sendiri</p>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">🕐 Waktu Notifikasi</label>
+            <input type="time" id="custom-notif-time" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">📆 Hari</label>
+            <div class="day-picker" id="custom-day-picker">
+              <button class="day-btn" data-day="Sen" onclick="toggleCustomDay(this)">Sen</button>
+              <button class="day-btn" data-day="Sel" onclick="toggleCustomDay(this)">Sel</button>
+              <button class="day-btn" data-day="Rab" onclick="toggleCustomDay(this)">Rab</button>
+              <button class="day-btn" data-day="Kam" onclick="toggleCustomDay(this)">Kam</button>
+              <button class="day-btn" data-day="Jum" onclick="toggleCustomDay(this)">Jum</button>
+              <button class="day-btn" data-day="Sab" onclick="toggleCustomDay(this)">Sab</button>
+              <button class="day-btn" data-day="Min" onclick="toggleCustomDay(this)">Min</button>
+            </div>
+          </div>
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">💬 Pesan Notifikasi</label>
+            <input type="text" id="custom-notif-msg" class="form-input" placeholder="Contoh: Saatnya minum air putih! 💧" />
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-primary" onclick="addCustomNotif()">➕ Tambah Notifikasi</button>
+        </div>
+
+        <div id="custom-notif-list" class="custom-notif-list" style="margin-top:1rem"></div>
+      </div>
+
+      <!-- Upcoming Reminders -->
+      <div class="section-card">
+        <h2 class="section-title">⏰ Akan Datang Hari Ini</h2>
+        <div id="upcoming-list" class="upcoming-list"></div>
+      </div>
+
+      <!-- Notification Log -->
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">📜 Riwayat Notifikasi</h2>
+          <button class="btn-outline" onclick="clearLog()">Hapus Semua</button>
+        </div>
+        <div id="notif-log" class="notif-log"></div>
+      </div>
+    </div>
+
+    <!-- ======= PAGE: HISTORY ======= -->
+    <div class="page" id="page-history">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">📜 Riwayat Aktivitas</h1>
+          <p class="page-sub">Aktivitas yang telah kamu selesaikan</p>
+        </div>
+        <button class="btn-outline" onclick="clearHistory()">🗑️ Hapus Riwayat</button>
+      </div>
+
+      <!-- History Stats -->
+      <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:linear-gradient(135deg,#15803d,#16a34a)">🏆</div>
+          <div class="stat-info">
+            <span class="stat-num" id="hist-total-done">0</span>
+            <span class="stat-label">Total Selesai</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:linear-gradient(135deg,#7c3aed,#8b5cf6)">📅</div>
+          <div class="stat-info">
+            <span class="stat-num" id="hist-days">0</span>
+            <span class="stat-label">Hari Aktif</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:linear-gradient(135deg,#b91c1c,#dc2626)">🔥</div>
+          <div class="stat-info">
+            <span class="stat-num" id="hist-streak">0</span>
+            <span class="stat-label">Streak Terbaik</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter -->
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">✅ Aktivitas Selesai</h2>
+          <select class="form-input form-input-sm" id="history-filter" onchange="renderHistory()">
+            <option value="all">Semua Hari</option>
+            <option value="today">Hari Ini</option>
+            <option value="week">7 Hari Terakhir</option>
+          </select>
+        </div>
+        <div id="history-list" class="history-list"></div>
+      </div>
+    </div>
+
+    <!-- ======= PAGE: SETTINGS ======= -->
+    <div class="page" id="page-settings">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">⚙️ Pengaturan</h1>
+          <p class="page-sub">Personalisasi pengalaman penggunamu</p>
+        </div>
+      </div>
+
+      <!-- Profile -->
+      <div class="section-card">
+        <h2 class="section-title">👤 Profil Pengguna</h2>
+        <div class="settings-row">
+          <label class="settings-label">Nama / Email</label>
+          <input type="text" id="set-name" class="form-input" placeholder="Masukkan namamu..." style="max-width:300px" />
+        </div>
+        <div class="settings-row">
+          <label class="settings-label">Peran / Role</label>
+          <select id="set-role" class="form-input" style="max-width:300px" onchange="changeRole()">
+            <option value="umum">🌟 Umum</option>
+            <option value="pekerja">💼 Pekerja</option>
+            <option value="mahasiswa">🎓 Mahasiswa</option>
+            <option value="pelajar">📚 Pelajar</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Notification Settings -->
+      <div class="section-card">
+        <h2 class="section-title">🔔 Pengaturan Notifikasi</h2>
+        <div class="settings-row">
+          <div>
+            <label class="settings-label">Nada Notifikasi</label>
+            <p class="settings-desc">Pilih suara yang diputar saat pengingat aktif</p>
+          </div>
+        </div>
+        <div class="sound-list">
+          <button class="sound-item" data-sound="bell" onclick="selectSoundSettings(this)">
+            <span class="sound-icon">🔔</span>
+            <span class="sound-info"><span class="sound-name">Bell Classic</span><span class="sound-desc">Lonceng klasik menenangkan</span></span>
+            <button class="btn-play" onclick="previewSound('bell', event)">▶</button>
+          </button>
+          <button class="sound-item" data-sound="chime" onclick="selectSoundSettings(this)">
+            <span class="sound-icon">🎵</span>
+            <span class="sound-info"><span class="sound-name">Gentle Chime</span><span class="sound-desc">Nada lembut dan menyenangkan</span></span>
+            <button class="btn-play" onclick="previewSound('chime', event)">▶</button>
+          </button>
+          <button class="sound-item" data-sound="digital" onclick="selectSoundSettings(this)">
+            <span class="sound-icon">📳</span>
+            <span class="sound-info"><span class="sound-name">Digital Ping</span><span class="sound-desc">Modern & tegas</span></span>
+            <button class="btn-play" onclick="previewSound('digital', event)">▶</button>
+          </button>
+          <button class="sound-item" data-sound="nature" onclick="selectSoundSettings(this)">
+            <span class="sound-icon">🌿</span>
+            <span class="sound-info"><span class="sound-name">Nature Breeze</span><span class="sound-desc">Alam yang menyegarkan</span></span>
+            <button class="btn-play" onclick="previewSound('nature', event)">▶</button>
+          </button>
+          <button class="sound-item" data-sound="silent" onclick="selectSoundSettings(this)">
+            <span class="sound-icon">🔕</span>
+            <span class="sound-info"><span class="sound-name">Diam (Hanya Visual)</span><span class="sound-desc">Tanpa suara, hanya pop-up</span></span>
+            <button class="btn-play" style="opacity:0.3;cursor:not-allowed" disabled>▶</button>
+          </button>
+        </div>
+
+        <div class="settings-row" style="margin-top:1rem">
+          <div>
+            <label class="settings-label">Menit Sebelum Pengingat</label>
+            <p class="settings-desc">Berapa menit sebelum jadwal pengingat berbunyi</p>
+          </div>
+          <select id="set-remind-before" class="form-input" style="max-width:150px">
+            <option value="0">Tepat waktu</option>
+            <option value="5" selected>5 menit</option>
+            <option value="10">10 menit</option>
+            <option value="15">15 menit</option>
+            <option value="30">30 menit</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Display Settings -->
+      <div class="section-card">
+        <h2 class="section-title">🎨 Tampilan</h2>
+        <div class="settings-row">
+          <div>
+            <label class="settings-label">Mode Gelap</label>
+            <p class="settings-desc">Aktifkan tema gelap untuk kenyamanan malam</p>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkMode(this)" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Quick Schedules by Role -->
+      <div class="section-card">
+        <h2 class="section-title">⚡ Template Jadwal Cepat</h2>
+        <p style="color:var(--text-muted);margin-bottom:1rem">Import template jadwal sesuai peranmu</p>
+        <div class="template-grid" id="template-grid"></div>
+      </div>
+
+      <div class="form-actions" style="margin-top:1rem">
+        <button class="btn-danger" onclick="resetApp()">🗑️ Reset Semua Data</button>
+        <button class="btn-primary" onclick="saveSettings()">💾 Simpan Pengaturan</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast"></div>
+
+<!-- Reminder Popup -->
+<div class="reminder-popup hidden" id="reminder-popup">
+  <div class="reminder-popup-inner">
+    <div class="reminder-popup-icon">🔔</div>
+    <h3 id="popup-title">Waktunya Aktivitas!</h3>
+    <p id="popup-body">Saatnya memulai aktivitasmu</p>
+    <div class="popup-actions">
+      <button class="btn-outline" onclick="snoozeReminder()">😴 Tunda 5 menit</button>
+      <button class="btn-primary" onclick="dismissReminder()">✅ Oke, Siap!</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Schedule Modal -->
+<div class="modal-overlay hidden" id="edit-modal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2 class="modal-title">✏️ Edit Jadwal</h2>
+      <button class="modal-close" onclick="closeEditModal()">✕</button>
+    </div>
+    <div class="form-grid">
+      <input type="hidden" id="edit-id" />
+      <div class="form-group">
+        <label class="form-label">📝 Nama Aktivitas</label>
+        <input type="text" id="edit-title" class="form-input" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">🏷️ Kategori</label>
+        <select id="edit-category" class="form-input">
+          <option value="kerja">💼 Kerja/Kuliah/Sekolah</option>
+          <option value="pribadi">🏠 Pribadi</option>
+          <option value="kesehatan">❤️ Kesehatan</option>
+          <option value="olahraga">🏃 Olahraga</option>
+          <option value="ibadah">🕌 Ibadah</option>
+          <option value="makan">🍽️ Makan/Minum</option>
+          <option value="lainnya">📌 Lainnya</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">🕐 Waktu Mulai</label>
+        <input type="time" id="edit-start" class="form-input" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">🕑 Waktu Selesai</label>
+        <input type="time" id="edit-end" class="form-input" />
+      </div>
+      <div class="form-group" style="grid-column:1/-1">
+        <label class="form-label">📆 Hari</label>
+        <div class="day-picker" id="edit-day-picker">
+          <button class="day-btn" data-day="Sen" onclick="toggleEditDay(this)">Sen</button>
+          <button class="day-btn" data-day="Sel" onclick="toggleEditDay(this)">Sel</button>
+          <button class="day-btn" data-day="Rab" onclick="toggleEditDay(this)">Rab</button>
+          <button class="day-btn" data-day="Kam" onclick="toggleEditDay(this)">Kam</button>
+          <button class="day-btn" data-day="Jum" onclick="toggleEditDay(this)">Jum</button>
+          <button class="day-btn" data-day="Sab" onclick="toggleEditDay(this)">Sab</button>
+          <button class="day-btn" data-day="Min" onclick="toggleEditDay(this)">Min</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">⚡ Prioritas</label>
+        <div class="priority-picker" id="edit-priority-picker">
+          <button class="priority-btn active" data-priority="rendah" onclick="selectEditPriority(this)">🟢 Rendah</button>
+          <button class="priority-btn" data-priority="sedang" onclick="selectEditPriority(this)">🟡 Sedang</button>
+          <button class="priority-btn" data-priority="tinggi" onclick="selectEditPriority(this)">🔴 Tinggi</button>
+        </div>
+      </div>
+      <div class="form-group" style="grid-column:1/-1">
+        <label class="form-label">🔔 Pesan Notifikasi Kustom</label>
+        <input type="text" id="edit-notif-msg" class="form-input" placeholder="Pesan pengingat kustom..." />
+      </div>
+      <div class="form-group" style="grid-column:1/-1">
+        <label class="form-label">📝 Catatan</label>
+        <textarea id="edit-note" class="form-input form-textarea"></textarea>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-outline" onclick="closeEditModal()">Batal</button>
+      <button class="btn-primary" onclick="saveEdit()">💾 Simpan Perubahan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Share Modal -->
+<div class="modal-overlay hidden" id="share-modal">
+  <div class="modal-card" style="max-width:420px">
+    <div class="modal-header">
+      <h2 class="modal-title">🔗 Bagikan Aplikasi</h2>
+      <button class="modal-close" onclick="closeShareModal()">✕</button>
+    </div>
+    <div style="text-align:center;padding:1rem 0">
+      <img src="logo.png" alt="Logo" style="width:80px;margin-bottom:1rem" />
+      <h3 style="font-weight:700;margin-bottom:0.5rem">Pengingat Aktivitas Harian</h3>
+      <p style="color:var(--text-muted);font-size:0.875rem;margin-bottom:1.5rem">Atur jadwal & dapatkan notifikasi otomatis setiap hari! 🔔</p>
+      <div class="share-url-box" id="share-url-box">
+        <span id="share-url-text">Memuat URL...</span>
+        <button class="btn-copy" onclick="copyShareUrl()">📋 Salin</button>
+      </div>
+    </div>
+    <div class="share-btns">
+      <button class="share-btn whatsapp" onclick="shareViaWA()">📱 WhatsApp</button>
+      <button class="share-btn twitter" onclick="shareViaTwitter()">🐦 Twitter/X</button>
+      <button class="share-btn copy-all" onclick="copyShareUrl()">📋 Salin Link</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
